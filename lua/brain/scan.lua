@@ -453,6 +453,66 @@ function M.scan(lines)
   return items
 end
 
+--- Plain note links (not embeds): [[target#anchor|alias]] and
+--- [text](path.md). Skips front matter, fenced code and inline code. Each
+--- link is { line, col, end_col, target, wiki }, 0-based, end_col exclusive.
+---@param lines string[]
+---@return table[]
+function M.links(lines)
+  local out = {}
+  local i, n = 1, #lines
+  if n > 0 and lines[1]:match('^%-%-%-%s*$') then
+    for j = 2, n do
+      if lines[j]:match('^%-%-%-%s*$') or lines[j]:match('^%.%.%.%s*$') then
+        i = j + 1
+        break
+      end
+    end
+  end
+  while i <= n do
+    local line = lines[i]:gsub('\r$', '')
+    local mark = fence_open(line)
+    if mark then
+      i = i + 1
+      while i <= n and not fence_close(lines[i], mark) do
+        i = i + 1
+      end
+    elseif line:find('[', 1, true) then
+      local masked = mask_code(line)
+      local pos = 1
+      while true do
+        local s, e = masked:find('%[%[[^%[%]]-%]%]', pos)
+        if not s then
+          break
+        end
+        if masked:sub(s - 1, s - 1) ~= '!' then
+          local target = wiki_parts(line:sub(s + 2, e - 2))
+          if target ~= '' and M.is_note(target) then
+            out[#out + 1] = { line = i - 1, col = s - 1, end_col = e, target = target, wiki = true }
+          end
+        end
+        pos = e + 1
+      end
+      pos = 1
+      while true do
+        local s, e, ds, de = masked:find('%[[^%[%]]*%]%(()[^()%s]*()[^()]*%)', pos)
+        if not s then
+          break
+        end
+        local dest = line:sub(ds, de - 1)
+        local path = url_decode((dest:gsub('#.*$', '')))
+        if masked:sub(s - 1, s - 1) ~= '!' and path ~= '' and not dest:find('://', 1, true)
+          and not dest:match('^mailto:') and not M.is_image(path) and M.is_note(path) then
+          out[#out + 1] = { line = i - 1, col = s - 1, end_col = e, target = path, wiki = false }
+        end
+        pos = e + 1
+      end
+    end
+    i = i + 1
+  end
+  return out
+end
+
 local cache = {} ---@type table<integer, {tick: integer, items: table[]}>
 
 --- Items of a loaded buffer, scanned once per change (base and media both

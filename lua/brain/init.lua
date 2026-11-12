@@ -89,6 +89,7 @@ local function attach(buf)
     end
     require('brain.media').refresh(buf)
     require('brain.note').refresh(buf)
+    require('brain.links').refresh(buf)
     vim.keymap.set('n', 'gf', function()
       M.follow()
     end, { buffer = buf, desc = 'brain: open embed/link under cursor' })
@@ -134,12 +135,14 @@ function M.setup(opts)
   vim.api.nvim_set_hl(0, 'BrainBaseText', { link = 'Normal', default = true })
   vim.api.nvim_set_hl(0, 'BrainMath', { link = '@markup.math', default = true })
   require('brain.note').define_highlights()
+  require('brain.links').define_highlights()
 
   setup_lsp(bin, cfg)
 
   local base = require('brain.base')
   local media = require('brain.media')
   local note = require('brain.note')
+  local links = require('brain.links')
   local refresh_text = debounce(cfg.base.debounce, function(buf)
     if not vim.api.nvim_buf_is_valid(buf) then
       return
@@ -148,6 +151,7 @@ function M.setup(opts)
     if vim.bo[buf].filetype == 'markdown' then
       media.refresh(buf)
       note.refresh(buf)
+      links.refresh(buf)
     end
   end)
 
@@ -174,6 +178,7 @@ function M.setup(opts)
         if vim.bo[ev.buf].filetype == 'markdown' then
           media.refresh(ev.buf)
           note.refresh(ev.buf)
+          links.refresh(ev.buf)
         end
       end
     end,
@@ -247,6 +252,7 @@ function M.setup(opts)
           end
           -- the saved note may be embedded elsewhere
           note.refresh_root(root)
+          links.refresh_root(root)
         end)
       end
     end,
@@ -256,6 +262,7 @@ function M.setup(opts)
     callback = function()
       require('brain.base.render').define_highlights()
       note.define_highlights()
+      links.define_highlights()
       for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.b[buf].brain_attached and vim.bo[buf].filetype == 'markdown' then
           media.clear(buf)
@@ -271,6 +278,7 @@ function M.setup(opts)
         base.detach(ev.buf)
         media.detach(ev.buf)
         note.detach(ev.buf)
+        links.detach(ev.buf)
       end
     end,
   })
