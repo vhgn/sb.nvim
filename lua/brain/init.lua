@@ -88,23 +88,28 @@ local function attach(buf)
       end
     end
     require('brain.media').refresh(buf)
+    require('brain.note').refresh(buf)
     vim.keymap.set('n', 'gf', function()
       M.follow()
     end, { buffer = buf, desc = 'brain: open embed/link under cursor' })
   end
 end
 
---- gf on ![[x.base]] / ![[img.png]] opens the target; otherwise falls back to gf.
+--- gf on ![[x.base]] / ![[img.png]] / ![[Note]] opens the target; otherwise falls back to gf.
 function M.follow()
   local buf = vim.api.nvim_get_current_buf()
   local line = vim.api.nvim_get_current_line()
   local col = vim.api.nvim_win_get_cursor(0)[2]
   for _, it in ipairs(require('brain.scan').scan({ line })) do
-    if (it.kind == 'base' or it.kind == 'image') and it.target and col >= it.col and col < it.end_col then
+    if (it.kind == 'base' or it.kind == 'image' or it.kind == 'note') and it.target and col >= it.col and col < it.end_col then
       local err, res = require('brain.client').request_sync(vim.b[buf].brain_root, 'resolve', { targets = { it.target }, from = vim.api.nvim_buf_get_name(buf) }, 2000)
       local path = not err and res and res[1] ~= '' and res[1] or nil
       if path then
-        vim.cmd.edit(vim.fn.fnameescape(path))
+        if it.kind == 'note' then
+          require('brain.note').open(path, it.anchor)
+        else
+          vim.cmd.edit(vim.fn.fnameescape(path))
+        end
         return
       end
     end
@@ -128,11 +133,13 @@ function M.setup(opts)
   require('brain.base.render').define_highlights()
   vim.api.nvim_set_hl(0, 'BrainBaseText', { link = 'Normal', default = true })
   vim.api.nvim_set_hl(0, 'BrainMath', { link = '@markup.math', default = true })
+  require('brain.note').define_highlights()
 
   setup_lsp(bin, cfg)
 
   local base = require('brain.base')
   local media = require('brain.media')
+  local note = require('brain.note')
   local refresh_text = debounce(cfg.base.debounce, function(buf)
     if not vim.api.nvim_buf_is_valid(buf) then
       return
@@ -140,6 +147,7 @@ function M.setup(opts)
     base.refresh(buf, { requery = vim.bo[buf].filetype == 'base' })
     if vim.bo[buf].filetype == 'markdown' then
       media.refresh(buf)
+      note.refresh(buf)
     end
   end)
 
@@ -165,6 +173,7 @@ function M.setup(opts)
         base.refresh(ev.buf)
         if vim.bo[ev.buf].filetype == 'markdown' then
           media.refresh(ev.buf)
+          note.refresh(ev.buf)
         end
       end
     end,
@@ -191,6 +200,9 @@ function M.setup(opts)
       for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.b[buf].brain_attached and vim.fn.bufwinid(buf) ~= -1 then
           base.redraw(buf)
+          if vim.bo[buf].filetype == 'markdown' then
+            note.refresh(buf)
+          end
         end
       end
     end,
@@ -233,6 +245,8 @@ function M.setup(opts)
               base.refresh(buf)
             end
           end
+          -- the saved note may be embedded elsewhere
+          note.refresh_root(root)
         end)
       end
     end,
@@ -241,6 +255,7 @@ function M.setup(opts)
     group = group,
     callback = function()
       require('brain.base.render').define_highlights()
+      note.define_highlights()
       for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.b[buf].brain_attached and vim.bo[buf].filetype == 'markdown' then
           media.clear(buf)
@@ -255,6 +270,7 @@ function M.setup(opts)
       if vim.b[ev.buf].brain_attached then
         base.detach(ev.buf)
         media.detach(ev.buf)
+        note.detach(ev.buf)
       end
     end,
   })

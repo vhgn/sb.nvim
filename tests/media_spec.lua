@@ -141,8 +141,8 @@ T['scan: wiki image sizes, spaces and parentheses'] = function()
   H.eq('300x200', items[1].size)
   H.eq('my image (1).PNG', items[2][5])
   H.eq('caption', items[3].size)
-  -- not images: notes and unknown extensions
-  H.eq({}, S('![[note]] ![[doc.pdf]] ![[a.png.md]]'))
+  -- not images: notes (their own kind) and other files (nothing)
+  H.eq({ { 'note', 0, 0, 9, 'note' }, { 'note', 0, 23, 36, 'a.png.md' } }, S('![[note]] ![[doc.pdf]] ![[a.png.md]]'))
 end
 
 T['scan: base embed with an empty or aliased view'] = function()

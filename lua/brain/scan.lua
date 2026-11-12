@@ -1,13 +1,21 @@
 -- Finds the renderable things in markdown lines: base embeds, ```base
--- blocks, image embeds, mermaid blocks and math. Pure: lines in, items out.
--- Lines and columns are 0-based; end_col is exclusive (bytes).
+-- blocks, image and note embeds, mermaid blocks and math. Pure: lines in,
+-- items out. Lines and columns are 0-based; end_col is exclusive (bytes).
 local M = {}
 
 local IMAGE_EXT = { png = true, jpg = true, jpeg = true, gif = true, webp = true, avif = true, bmp = true, svg = true }
+-- embeddable files that are not notes (a dot in a note's name is fine)
+local OTHER_EXT = { base = true, canvas = true, pdf = true, mp3 = true, wav = true, ogg = true, m4a = true, flac = true, webm = true, mp4 = true, mov = true, mkv = true }
 
 function M.is_image(path)
   local ext = path:match('%.([%w]+)$')
   return ext ~= nil and IMAGE_EXT[ext:lower()] == true
+end
+
+--- True when an embed target names a markdown note (with or without .md).
+function M.is_note(path)
+  local ext = path:match('%.([%w]+)$')
+  return ext == nil or not (IMAGE_EXT[ext:lower()] or OTHER_EXT[ext:lower()])
 end
 
 --- Blanks inline code spans (`…`, ``…``) so their contents are ignored; keeps byte offsets.
@@ -372,6 +380,8 @@ function M.scan(lines)
             items[#items + 1] = { kind = 'base', line = i - 1, end_line = i - 1, col = s - 1, end_col = e, target = target, view = anchor }
           elseif M.is_image(target) then
             items[#items + 1] = { kind = 'image', line = i - 1, end_line = i - 1, col = s - 1, end_col = e, target = target, wiki = true, size = alias }
+          elseif target ~= '' and M.is_note(target) then
+            items[#items + 1] = { kind = 'note', line = i - 1, end_line = i - 1, col = s - 1, end_col = e, target = target, anchor = anchor, alias = alias }
           end
           pos = e + 1
         end

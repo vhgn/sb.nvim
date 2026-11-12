@@ -30,6 +30,10 @@ M.defaults = {
     max_height = 40, -- rows of an embed; longer results are cut (navigate to see more)
     debounce = 250,
   },
+  notes = {
+    enabled = true, -- render ![[Note]] / ![[Note#Heading]] / ![[Note#^block]] inline
+    max_height = 40, -- rows of embedded text; longer notes are cut (gf opens them)
+  },
   images = {
     enabled = true, -- needs image.nvim
     max_height = 20, -- in terminal rows
