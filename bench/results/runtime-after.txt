@@ -1,0 +1,61 @@
+# brain runtime benchmarks (after); medians: Go over 5 runs (go test -bench, 1s each),
+# Lua over 3 runs of nvim/tests/bench/run.sh (each itself the median of 7 samples)
+# "before" = the original runtime files, "after" = this change; both built from one snapshot of the repo
+# (so vault/bases/yaml are identical) and run alternately. Reproduce: nvim/tests/bench/run.sh and
+# go test -run x -bench . -benchmem ./internal/tex/ ./internal/daemon/
+
+## Go
+BenchmarkSVG                                           346.0 µs    204.8 KiB     1357 allocs
+BenchmarkUnicode                                        16.3 µs      6.2 KiB      219 allocs
+BenchmarkRoundTrip/ping                                 23.9 µs      1.3 KiB       29 allocs
+BenchmarkRoundTrip/texUnicode50                        194.0 µs     44.6 KiB     1226 allocs
+BenchmarkRoundTrip/resolve                              37.6 µs      2.4 KiB       45 allocs
+BenchmarkRoundTrip/tex/cached                           43.7 µs      3.8 KiB       79 allocs
+BenchmarkQuery/1k                                       2.07 ms    683.2 KiB     8942 allocs
+BenchmarkQuery/1k/8-concurrent-stale                    5.14 ms     6.05 MiB    77633 allocs
+BenchmarkQuery/10k                                     10.48 ms     6.15 MiB    83615 allocs
+BenchmarkQuery/10k/8-concurrent-stale                  27.52 ms    56.31 MiB   728135 allocs
+BenchmarkRenderTeX/cached                                3.2 µs      0.9 KiB       14 allocs
+BenchmarkRenderTeX/cold                                43.07 ms     66.5 KiB      285 allocs
+
+## Lua (time per call, Lua garbage per call)
+scan/200                                     168.6 µs     39.0 KiB
+scan/2000                                     1.69 ms    391.2 KiB
+scan/20000                                   10.27 ms     3.94 MiB
+media.refresh/200                            834.6 µs    201.1 KiB
+media.refresh+inline/200                     888.1 µs    167.8 KiB
+media.cursor_moved/200                        25.5 µs      0.3 KiB
+media.refresh/2000                           14.82 ms     1.90 MiB
+media.refresh+inline/2000                     5.28 ms     1.56 MiB
+media.cursor_moved/2000                       27.9 µs      0.3 KiB
+media.refresh/20000                          98.91 ms    19.65 MiB
+media.refresh+inline/20000                   57.79 ms    15.43 MiB
+media.cursor_moved/20000                      32.5 µs      0.3 KiB
+client.ping                                   41.1 µs      2.7 KiB
+client.texUnicode/50                         240.5 µs     13.4 KiB
+client.texUnicode/500                         2.14 ms    124.8 KiB
+client.resolve                                71.0 µs      3.2 KiB
+client.tex/cached                             68.4 µs      3.2 KiB
+client.query/1k                               2.35 ms     77.6 KiB
+client.query-all/1k                           7.63 ms     1.58 MiB
+client.query/10k                             11.55 ms     79.9 KiB
+client.query-all/10k                         75.74 ms    21.28 MiB
+render.table/100                              1.16 ms    483.6 KiB
+render.table/1000                            13.07 ms     4.61 MiB
+render.table/10000                          153.71 ms    47.09 MiB
+render.cards/100                              2.72 ms     1.05 MiB
+render.cards/1000                            28.58 ms    10.38 MiB
+render.cards/10000                          301.60 ms   103.72 MiB
+render.list/100                              856.8 µs    314.8 KiB
+render.list/1000                              8.76 ms     3.15 MiB
+render.list/10000                           101.16 ms    32.66 MiB
+render.map/100                               396.2 µs    292.1 KiB
+render.map/1000                               2.56 ms     1.90 MiB
+render.map/10000                             24.60 ms    16.78 MiB
+base.refresh/4-embeds                         2.99 ms    437.1 KiB
+textchanged/4-embeds+media                    9.41 ms     1.89 MiB
+base.redraw/same-width                       867.3 µs      7.5 KiB
+base.redraw/resized                          45.99 ms    13.57 MiB
+base.item_at/j                                 1.2 µs      0.7 KiB
+base.item_at/k                                 1.2 µs      0.7 KiB
+base.item_at/enter(span)                       7.3 µs      1.2 KiB

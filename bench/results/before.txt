@@ -1,0 +1,153 @@
+?   	brain/internal/benchdata	[no test files]
+goos: linux
+goarch: amd64
+pkg: brain/internal/lsp
+cpu: Intel(R) Core(TM) Ultra 7 155H
+BenchmarkInitialize/100-22       	      91	  13060795 ns/op	 2742510 B/op	   20924 allocs/op
+BenchmarkInitialize/100-22       	      81	  13370384 ns/op	 2741406 B/op	   20922 allocs/op
+BenchmarkInitialize/100-22       	      88	  13384227 ns/op	 2744683 B/op	   20922 allocs/op
+BenchmarkInitialize/1000-22      	       8	 143292620 ns/op	27088191 B/op	  204095 allocs/op
+BenchmarkInitialize/1000-22      	       8	 141398937 ns/op	27100104 B/op	  204091 allocs/op
+BenchmarkInitialize/1000-22      	       8	 133469577 ns/op	27055045 B/op	  204086 allocs/op
+BenchmarkInitialize/5000-22      	       2	 630526180 ns/op	135064916 B/op	 1025530 allocs/op
+BenchmarkInitialize/5000-22      	       2	 640996633 ns/op	135129112 B/op	 1025516 allocs/op
+BenchmarkInitialize/5000-22      	       2	 646412860 ns/op	135171744 B/op	 1025526 allocs/op
+BenchmarkCompletionWiki/100-22   	    2359	    520460 ns/op	     68439 resp-bytes	  207498 B/op	     630 allocs/op
+BenchmarkCompletionWiki/100-22   	    2174	    517317 ns/op	     68439 resp-bytes	  206918 B/op	     630 allocs/op
+BenchmarkCompletionWiki/100-22   	    2310	    523835 ns/op	     68439 resp-bytes	  206929 B/op	     630 allocs/op
+BenchmarkCompletionWiki/1000-22  	      42	  24497091 ns/op	    701921 resp-bytes	 2094403 B/op	    6035 allocs/op
+BenchmarkCompletionWiki/1000-22  	      43	  24576317 ns/op	    701921 resp-bytes	 2090546 B/op	    6035 allocs/op
+BenchmarkCompletionWiki/1000-22  	      49	  21169952 ns/op	    701921 resp-bytes	 2071130 B/op	    6035 allocs/op
+BenchmarkCompletionWiki/5000-22  	       3	 410603284 ns/op	   3564616 resp-bytes	14548672 B/op	   30047 allocs/op
+BenchmarkCompletionWiki/5000-22  	       3	 428052711 ns/op	   3564616 resp-bytes	18045266 B/op	   30059 allocs/op
+BenchmarkCompletionWiki/5000-22  	       2	 526661767 ns/op	   3564616 resp-bytes	15602140 B/op	   30059 allocs/op
+BenchmarkCompletionAt/100-22     	    2448	    550605 ns/op	  210339 B/op	     729 allocs/op
+BenchmarkCompletionAt/100-22     	    2077	    556300 ns/op	  209816 B/op	     729 allocs/op
+BenchmarkCompletionAt/100-22     	    2145	    551641 ns/op	  208669 B/op	     729 allocs/op
+BenchmarkCompletionAt/1000-22    	      43	  24565057 ns/op	 2138922 B/op	    7034 allocs/op
+BenchmarkCompletionAt/1000-22    	      45	  25687246 ns/op	 2248761 B/op	    7035 allocs/op
+BenchmarkCompletionAt/1000-22    	      48	  24780012 ns/op	 2286688 B/op	    7036 allocs/op
+BenchmarkCompletionAt/5000-22    	       3	 411342693 ns/op	14787757 B/op	   35046 allocs/op
+BenchmarkCompletionAt/5000-22    	       3	 426471857 ns/op	14787757 B/op	   35046 allocs/op
+BenchmarkCompletionAt/5000-22    	       3	 431689879 ns/op	14787757 B/op	   35046 allocs/op
+BenchmarkTypingCompletion/100-22 	    2253	    677287 ns/op	  236499 B/op	     840 allocs/op
+BenchmarkTypingCompletion/100-22 	    1768	    678434 ns/op	  236321 B/op	     840 allocs/op
+BenchmarkTypingCompletion/100-22 	    1765	    680157 ns/op	  238042 B/op	     840 allocs/op
+BenchmarkTypingCompletion/1000-22         	      42	  25048202 ns/op	 2192211 B/op	    6261 allocs/op
+BenchmarkTypingCompletion/1000-22         	      44	  25801325 ns/op	 2181012 B/op	    6261 allocs/op
+BenchmarkTypingCompletion/1000-22         	      42	  24673173 ns/op	 2129597 B/op	    6260 allocs/op
+BenchmarkTypingCompletion/5000-22         	       2	 558515620 ns/op	16672004 B/op	   30258 allocs/op
+BenchmarkTypingCompletion/5000-22         	       2	 660250608 ns/op	15629860 B/op	   30267 allocs/op
+BenchmarkTypingCompletion/5000-22         	       3	 478336535 ns/op	18071352 B/op	   30266 allocs/op
+BenchmarkCompletionHeading/100-22         	   27694	     43606 ns/op	    9713 B/op	      97 allocs/op
+BenchmarkCompletionHeading/100-22         	   26016	     44950 ns/op	    9711 B/op	      97 allocs/op
+BenchmarkCompletionHeading/100-22         	   27727	     44049 ns/op	    9710 B/op	      97 allocs/op
+BenchmarkCompletionHeading/1000-22        	    4328	    261980 ns/op	   17020 B/op	      97 allocs/op
+BenchmarkCompletionHeading/1000-22        	    4226	    275896 ns/op	   17023 B/op	      97 allocs/op
+BenchmarkCompletionHeading/1000-22        	    4460	    261103 ns/op	   17027 B/op	      97 allocs/op
+BenchmarkCompletionHeading/5000-22        	    1179	   1146734 ns/op	   49780 B/op	      97 allocs/op
+BenchmarkCompletionHeading/5000-22        	    1197	    934355 ns/op	   49778 B/op	      97 allocs/op
+BenchmarkCompletionHeading/5000-22        	     834	   1205739 ns/op	   49795 B/op	      97 allocs/op
+BenchmarkDefinition/100-22                	   44430	     25965 ns/op	    2283 B/op	      32 allocs/op
+BenchmarkDefinition/100-22                	   45788	     26485 ns/op	    2315 B/op	      32 allocs/op
+BenchmarkDefinition/100-22                	   46088	     25960 ns/op	    2315 B/op	      32 allocs/op
+BenchmarkDefinition/1000-22               	    3736	    322613 ns/op	   10068 B/op	      34 allocs/op
+BenchmarkDefinition/1000-22               	    3501	    288601 ns/op	   10068 B/op	      34 allocs/op
+BenchmarkDefinition/1000-22               	    3598	    324551 ns/op	   10069 B/op	      34 allocs/op
+BenchmarkDefinition/5000-22               	    1176	    943525 ns/op	   42354 B/op	      29 allocs/op
+BenchmarkDefinition/5000-22               	    1022	   1152636 ns/op	   42355 B/op	      29 allocs/op
+BenchmarkDefinition/5000-22               	    1471	    794840 ns/op	   42354 B/op	      29 allocs/op
+BenchmarkHover/100-22                     	   47064	     27656 ns/op	    3710 B/op	      35 allocs/op
+BenchmarkHover/100-22                     	   40908	     28263 ns/op	    3710 B/op	      35 allocs/op
+BenchmarkHover/100-22                     	   43638	     27667 ns/op	    3710 B/op	      35 allocs/op
+BenchmarkHover/1000-22                    	    3667	    327740 ns/op	   15214 B/op	      37 allocs/op
+BenchmarkHover/1000-22                    	    3715	    333637 ns/op	   15210 B/op	      37 allocs/op
+BenchmarkHover/1000-22                    	    3368	    337126 ns/op	   15217 B/op	      37 allocs/op
+BenchmarkHover/5000-22                    	    1184	    953014 ns/op	   47901 B/op	      32 allocs/op
+BenchmarkHover/5000-22                    	    1263	    893194 ns/op	   47890 B/op	      32 allocs/op
+BenchmarkHover/5000-22                    	    1165	    873682 ns/op	   47897 B/op	      32 allocs/op
+BenchmarkReferences/100-22                	      34	  36679304 ns/op	 2029015 B/op	   11965 allocs/op
+BenchmarkReferences/100-22                	      31	  36078717 ns/op	 2029624 B/op	   11964 allocs/op
+BenchmarkReferences/100-22                	      30	  35869802 ns/op	 2030389 B/op	   11965 allocs/op
+BenchmarkReferences/1000-22               	       1	4055616477 ns/op	135913152 B/op	  115938 allocs/op
+BenchmarkReferences/1000-22               	       1	3687891180 ns/op	135913232 B/op	  115939 allocs/op
+BenchmarkReferences/1000-22               	       1	3785137921 ns/op	135898800 B/op	  115943 allocs/op
+BenchmarkReferences/5000-22               	       1	86331512838 ns/op	3300195384 B/op	  582908 allocs/op
+BenchmarkReferences/5000-22               	goos: linux
+goarch: amd64
+pkg: brain/internal/lsp
+cpu: Intel(R) Core(TM) Ultra 7 155H
+BenchmarkReferencesHeading/100-22         	      33	  34715416 ns/op	 2039035 B/op	   11937 allocs/op
+BenchmarkReferencesHeading/100-22         	      31	  36322115 ns/op	 2038864 B/op	   11933 allocs/op
+BenchmarkReferencesHeading/100-22         	      33	  35405599 ns/op	 2035246 B/op	   11931 allocs/op
+BenchmarkReferencesHeading/1000-22        	       1	3783596852 ns/op	136113680 B/op	  115928 allocs/op
+BenchmarkReferencesHeading/1000-22        	       1	3687244883 ns/op	136097952 B/op	  115913 allocs/op
+BenchmarkReferencesHeading/1000-22        	       1	3637805911 ns/op	136097968 B/op	  115913 allocs/op
+BenchmarkDocumentSymbol/100-22            	   67128	     17950 ns/op	    6931 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/100-22            	   67108	     17908 ns/op	    6931 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/100-22            	   65427	     17845 ns/op	    6931 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/1000-22           	   73897	     16495 ns/op	    6935 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/1000-22           	   69033	     16687 ns/op	    6934 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/1000-22           	   70152	     16558 ns/op	    6934 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/5000-22           	   82461	     15052 ns/op	    6946 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/5000-22           	   78609	     15203 ns/op	    6946 B/op	      41 allocs/op
+BenchmarkDocumentSymbol/5000-22           	   77509	     15172 ns/op	    6945 B/op	      41 allocs/op
+BenchmarkWorkspaceSymbol/100-22           	    7912	    140449 ns/op	   16579 B/op	    1316 allocs/op
+BenchmarkWorkspaceSymbol/100-22           	    8913	    141122 ns/op	   16579 B/op	    1316 allocs/op
+BenchmarkWorkspaceSymbol/100-22           	    9073	    143540 ns/op	   16579 B/op	    1316 allocs/op
+BenchmarkWorkspaceSymbol/1000-22          	     842	   1414581 ns/op	  160716 B/op	   13016 allocs/op
+BenchmarkWorkspaceSymbol/1000-22          	     848	   1418226 ns/op	  160716 B/op	   13016 allocs/op
+BenchmarkWorkspaceSymbol/1000-22          	     883	   1354029 ns/op	  160713 B/op	   13016 allocs/op
+BenchmarkWorkspaceSymbol/5000-22          	     150	   7970810 ns/op	  833513 B/op	   65016 allocs/op
+BenchmarkWorkspaceSymbol/5000-22          	     145	   8114727 ns/op	  833492 B/op	   65016 allocs/op
+BenchmarkWorkspaceSymbol/5000-22          	     147	   8001411 ns/op	  833492 B/op	   65016 allocs/op
+PASS
+ok  	brain/internal/lsp	43.339s
+goos: linux
+goarch: amd64
+pkg: brain/internal/md
+cpu: Intel(R) Core(TM) Ultra 7 155H
+BenchmarkParse-22    	   12544	     95402 ns/op	  26.11 MB/s	   16686 B/op	     169 allocs/op
+BenchmarkParse-22    	   12380	     96910 ns/op	  25.70 MB/s	   16681 B/op	     169 allocs/op
+BenchmarkParse-22    	   12364	     97383 ns/op	  25.58 MB/s	   16672 B/op	     169 allocs/op
+PASS
+ok  	brain/internal/md	3.609s
+goos: linux
+goarch: amd64
+pkg: brain/internal/workspace
+cpu: Intel(R) Core(TM) Ultra 7 155H
+BenchmarkScan/100-22        	      87	  13599554 ns/op	 2733692 B/op	   20850 allocs/op
+BenchmarkScan/100-22        	     100	  13568003 ns/op	 2732444 B/op	   20849 allocs/op
+BenchmarkScan/100-22        	      88	  13449644 ns/op	 2727654 B/op	   20848 allocs/op
+BenchmarkScan/1000-22       	       8	 138552974 ns/op	27072473 B/op	  204015 allocs/op
+BenchmarkScan/1000-22       	       8	 141843960 ns/op	27076875 B/op	  204016 allocs/op
+BenchmarkScan/1000-22       	       8	 137675530 ns/op	27047546 B/op	  204013 allocs/op
+BenchmarkScan/5000-22       	       2	 649992214 ns/op	135103296 B/op	 1025463 allocs/op
+BenchmarkScan/5000-22       	       2	 646474254 ns/op	134996076 B/op	 1025430 allocs/op
+BenchmarkScan/5000-22       	       2	 649514500 ns/op	135068548 B/op	 1025450 allocs/op
+BenchmarkResolveDoc/100-22  	    6859	    184394 ns/op	   10664 B/op	      98 allocs/op
+BenchmarkResolveDoc/100-22  	    5984	    178935 ns/op	   10664 B/op	      98 allocs/op
+BenchmarkResolveDoc/100-22  	    6854	    180964 ns/op	   10664 B/op	      98 allocs/op
+BenchmarkResolveDoc/1000-22 	     297	   3751540 ns/op	  126592 B/op	     111 allocs/op
+BenchmarkResolveDoc/1000-22 	     350	   3214718 ns/op	  126592 B/op	     111 allocs/op
+BenchmarkResolveDoc/1000-22 	     462	   2525810 ns/op	  126592 B/op	     111 allocs/op
+BenchmarkResolveDoc/5000-22 	      80	  13877860 ns/op	  576440 B/op	      88 allocs/op
+BenchmarkResolveDoc/5000-22 	      85	  13160408 ns/op	  576440 B/op	      88 allocs/op
+BenchmarkResolveDoc/5000-22 	      68	  16545915 ns/op	  576440 B/op	      88 allocs/op
+BenchmarkBacklinks/100-22   	      31	  34658648 ns/op	 1873564 B/op	   11895 allocs/op
+BenchmarkBacklinks/100-22   	      34	  34093197 ns/op	 1873564 B/op	   11895 allocs/op
+BenchmarkBacklinks/100-22   	      31	  34463608 ns/op	 1873563 B/op	   11895 allocs/op
+BenchmarkBacklinks/1000-22  	       1	4175372362 ns/op	134520064 B/op	  115870 allocs/op
+BenchmarkBacklinks/1000-22  	       1	4176968606 ns/op	134519824 B/op	  115868 allocs/op
+BenchmarkBacklinks/1000-22  	       1	3765040124 ns/op	134519904 B/op	  115869 allocs/op
+BenchmarkShortNameAll/100-22         	    9123	    122867 ns/op	     952 B/op	       3 allocs/op
+BenchmarkShortNameAll/100-22         	   13903	     86131 ns/op	     952 B/op	       3 allocs/op
+BenchmarkShortNameAll/100-22         	    8528	    142387 ns/op	     952 B/op	       3 allocs/op
+BenchmarkShortNameAll/1000-22        	      96	  11692338 ns/op	    8248 B/op	       3 allocs/op
+BenchmarkShortNameAll/1000-22        	     109	  10807854 ns/op	    8248 B/op	       3 allocs/op
+BenchmarkShortNameAll/1000-22        	      99	  11281333 ns/op	    8248 B/op	       3 allocs/op
+BenchmarkShortNameAll/5000-22        	       3	 361594386 ns/op	   41016 B/op	       3 allocs/op
+BenchmarkShortNameAll/5000-22        	       3	 359723581 ns/op	   41016 B/op	       3 allocs/op
+BenchmarkShortNameAll/5000-22        	       3	 347634402 ns/op	   41016 B/op	       3 allocs/op
+PASS
+ok  	brain/internal/workspace	53.675s
