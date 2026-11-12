@@ -195,6 +195,21 @@ function M.setup(opts)
       end
     end,
   })
+  -- A note opened from an unresolved link may live in a directory that does
+  -- not exist yet; create it on first save.
+  vim.api.nvim_create_autocmd('BufWritePre', {
+    group = group,
+    pattern = { '*.md', '*.markdown' },
+    callback = function(ev)
+      if not vim.b[ev.buf].brain_attached then
+        return
+      end
+      local dir = vim.fs.dirname(vim.fn.fnamemodify(vim.api.nvim_buf_get_name(ev.buf), ':p'))
+      if dir and not vim.uv.fs_stat(dir) then
+        vim.fn.mkdir(dir, 'p')
+      end
+    end,
+  })
   -- Saving any file in a vault updates the daemon's index, then every visible base.
   vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufDelete' }, {
     group = group,

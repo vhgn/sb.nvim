@@ -161,6 +161,11 @@ func (s *Server) definition(p TextDocumentPositionParams) *Location {
 	}
 	t, h := s.ws.Resolve(d, *l)
 	if t == nil {
+		// Unresolved link: point at the note it would create, so the editor
+		// opens a new buffer for it.
+		if p := s.ws.NewNotePath(d, *l); p != "" {
+			return &Location{pathToURI(p), Range{}}
+		}
 		return nil
 	}
 	loc := target(t, h)

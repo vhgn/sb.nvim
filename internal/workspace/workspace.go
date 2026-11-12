@@ -268,6 +268,39 @@ func (w *Workspace) Resolve(from *Document, l md.Link) (*Document, int) {
 	return target, target.Doc.FindHeading(l.Anchor)
 }
 
+// NewNotePath returns the path where the note a link points at would be
+// created when it does not resolve: wiki links are placed under Root (or
+// next to from without a root), markdown links resolve like paths. ".md" is
+// appended when the target has no extension. Targets with a non markdown
+// extension (images, PDFs, …) give "".
+func (w *Workspace) NewNotePath(from *Document, l md.Link) string {
+	target := strings.TrimSpace(l.Target)
+	if target == "" {
+		return ""
+	}
+	if ext := filepath.Ext(target); ext != "" && !IsMarkdown(target) {
+		return ""
+	}
+	if !IsMarkdown(target) {
+		target += ".md"
+	}
+	p := filepath.FromSlash(target)
+	base := w.Root
+	if from != nil && (base == "" || l.Kind == md.MarkdownLink) {
+		base = filepath.Dir(from.Path)
+	}
+	switch {
+	case strings.HasPrefix(target, "/") && w.Root != "":
+		p = filepath.Join(w.Root, p)
+	case !filepath.IsAbs(p) && base != "":
+		p = filepath.Join(base, p)
+	}
+	if !filepath.IsAbs(p) {
+		return ""
+	}
+	return filepath.Clean(p)
+}
+
 // ResolveName resolves a wiki style target name.
 func (w *Workspace) ResolveName(from *Document, name string) *Document {
 	if strings.TrimSpace(name) == "" {

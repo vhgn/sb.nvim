@@ -473,3 +473,21 @@ func TestUnsavedEditsAreVisibleAcrossDocuments(t *testing.T) {
 		t.Errorf("line = %q (labels %v)", got.Line, got.Labels)
 	}
 }
+
+func TestDefinitionOpensMissingNote(t *testing.T) {
+	t.Parallel()
+	var got string
+	runNvim(t, "", `
+		H.open('index.md')
+		vim.api.nvim_buf_set_lines(0, -1, -1, false, { 'Todo: [[ideas/fresh]]' })
+		vim.wait(200)
+		local l, c = H.find('[[ideas/fresh]]')
+		vim.api.nvim_win_set_cursor(0, { l + 1, c + 3 })
+		local before = vim.api.nvim_get_current_buf()
+		vim.lsp.buf.definition()
+		assert(vim.wait(5000, function() return vim.api.nvim_get_current_buf() ~= before end), 'no jump')
+		return H.rel(vim.uri_from_bufnr(0))`, &got)
+	if got != "ideas/fresh.md" {
+		t.Errorf("got %q, want ideas/fresh.md", got)
+	}
+}

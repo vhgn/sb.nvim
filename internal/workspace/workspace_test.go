@@ -38,3 +38,23 @@ func TestResolve(t *testing.T) {
 		t.Errorf("heading backlinks: %+v", refs)
 	}
 }
+
+func TestNewNotePath(t *testing.T) {
+	w := New("/notes")
+	from := w.Set("/notes/sub/index.md",
+		"[[new]] [[deep/new note]] [[x.md]] [a](rel) [b](/top.md) [c](pic.png) [[#Top]]\n", false)
+	want := []string{
+		"/notes/new.md",
+		"/notes/deep/new note.md",
+		"/notes/x.md",
+		"/notes/sub/rel.md",
+		"/notes/top.md",
+		"",
+		"",
+	}
+	for i, l := range from.Doc.Links {
+		if got := w.NewNotePath(from, l); got != filepath.FromSlash(want[i]) && !(got == "" && want[i] == "") {
+			t.Errorf("link %d (%+v): got %q, want %q", i, l, got, want[i])
+		}
+	}
+}
