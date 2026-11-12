@@ -12,7 +12,7 @@ local function lines(buf)
       for _, ch in ipairs(vl) do
         s[#s + 1] = ch[1]
       end
-      out[#out + 1] = table.concat(s)
+      out[#out + 1] = (table.concat(s):gsub('^│ (.-)%s*│$', '%1'))
     end
   end
   return out
@@ -25,7 +25,7 @@ local function wait_text(buf, needle)
   return lines(buf)
 end
 
-T['a note embed shows the note between two rules, the first naming it'] = function()
+T['a note embed shows the note in a frame without a title'] = function()
   H.vault({
     ['Road map.md'] = '---\ntags: [x]\n---\n# Road map\n\n- [[A]] — first\n',
     ['index.md'] = '![[Road map]]\ntail\n',
@@ -33,12 +33,22 @@ T['a note embed shows the note between two rules, the first naming it'] = functi
   H.setup()
   local buf = H.open('index.md')
   local l = wait_text(buf, 'first')
-  H.eq('', (l[1]:gsub('^── Road map ', ''):gsub('─', '')), 'top rule is a rule after the name')
+  H.eq('╭╮', (l[1]:gsub('─', '')), 'top of the box has no title: ' .. l[1])
   H.eq('# Road map', l[2])
   H.eq('', l[3])
   H.eq('- [[A]] — first', l[4])
-  H.eq('', (l[#l]:gsub('─', '')), 'bottom rule: ' .. l[#l])
+  H.eq('╰╯', (l[#l]:gsub('─', '')), 'bottom of the box: ' .. l[#l])
   H.not_contains(table.concat(l, '\n'), 'tags:', 'front matter is hidden')
+  local marks_d = vim.api.nvim_buf_get_extmarks(buf, require('brain.note').ns, 0, -1, { details = true })
+  local widths = {}
+  for _, vl in ipairs(marks_d[1][4].virt_lines) do
+    local w = 0
+    for _, ch in ipairs(vl) do
+      w = w + vim.fn.strdisplaywidth(ch[1])
+    end
+    widths[w] = true
+  end
+  H.eq(1, vim.tbl_count(widths), 'every line of the box is as wide: ' .. vim.inspect(widths))
   local marks = vim.api.nvim_buf_get_extmarks(buf, require('brain.note').ns, 0, -1, {})
   H.eq(0, marks[1][2], 'anchored on the embed line')
 end
@@ -51,7 +61,7 @@ T['a heading anchor embeds only that section'] = function()
   H.setup()
   local buf = H.open('index.md')
   local l = wait_text(buf, 'kept')
-  H.ok(l[1]:find('n › Keep', 1, true), l[1])
+  H.eq('╭╮', (l[1]:gsub('─', '')), 'top of the box has no title: ' .. l[1])
   local text = table.concat(l, '\n')
   H.contains(text, 'sub text')
   H.not_contains(text, 'intro')
@@ -115,6 +125,26 @@ T['gf on a note embed opens the note at its heading'] = function()
   require('brain').follow()
   H.eq(H.root .. '/n.md', vim.api.nvim_buf_get_name(0))
   H.eq(3, vim.api.nvim_win_get_cursor(0)[1])
+end
+
+T['embedded text wraps between words at 80 columns'] = function()
+  local words = {}
+  for k = 1, 60 do
+    words[k] = 'word' .. k
+  end
+  local para = table.concat(words, ' ')
+  H.vault({ ['long.md'] = para .. '\n', ['index.md'] = '![[long]]\n' })
+  H.setup()
+  vim.o.columns = 200
+  local buf = H.open('index.md')
+  local l = wait_text(buf, 'word60')
+  local body = vim.list_slice(l, 2, #l - 1)
+  H.ok(#body > 1, 'wrapped: ' .. vim.inspect(body))
+  for _, b in ipairs(body) do
+    H.ok(vim.fn.strdisplaywidth(b) <= 80, 'at most 80 columns: ' .. b)
+  end
+  H.eq(para, table.concat(body, ' '), 'no word is split')
+  H.ok(vim.fn.strdisplaywidth(l[1]) <= 84, 'box fits the text: ' .. vim.fn.strdisplaywidth(l[1]))
 end
 
 return T

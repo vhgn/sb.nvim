@@ -1,6 +1,6 @@
 -- Renders note embeds as virtual lines below the embed: ![[Note]],
 -- ![[Note#Heading]] (that section) and ![[Note#^block]] (that paragraph).
--- The text sits between two rules; the top one names the note.
+-- The text sits in a thin box.
 local client = require('brain.client')
 local config = require('brain.config')
 local scan = require('brain.scan')
@@ -15,8 +15,11 @@ local state = {}
 
 function M.define_highlights()
   local set = vim.api.nvim_set_hl
-  set(0, 'BrainNoteRule', { link = 'FloatBorder', default = true })
-  set(0, 'BrainNoteTitle', { link = 'Title', default = true })
+  -- the frame takes only the foreground of FloatBorder: its background
+  -- would turn every rule into a solid bar
+  local border = vim.api.nvim_get_hl(0, { name = 'FloatBorder', link = false })
+  local fg = border.fg or vim.api.nvim_get_hl(0, { name = 'WinSeparator', link = false }).fg
+  set(0, 'BrainNoteRule', fg and { fg = fg, default = true } or { link = 'NonText', default = true })
   set(0, 'BrainNoteText', { link = 'Normal', default = true })
   set(0, 'BrainNoteHeading', { link = '@markup.heading', default = true })
   set(0, 'BrainNoteLink', { link = '@markup.link.label', default = true })
@@ -183,24 +186,28 @@ local function chunks(piece, is_heading)
   return out
 end
 
-local function title_of(item)
-  if item.alias and item.alias ~= '' then
-    return item.alias
+--- Virtual lines for an embed: the text in a thin box,
+---   ╭──────╮
+---   │ text │
+---   ╰──────╯
+--- The box carries no title: the embed line above already names the note.
+local function build(lines, err, width)
+  -- '│ ' and ' │' take 4 columns; the text is at most notes.max_width wide
+  local inner = math.max(8, math.min(width - 4, config.options.notes.max_width or 80))
+  width = inner + 4
+  local virt = { { { '╭' .. string.rep('─', width - 2) .. '╮', 'BrainNoteRule' } } }
+  local function add(chunks_)
+    local w = 0
+    for _, c in ipairs(chunks_) do
+      w = w + vim.fn.strdisplaywidth(c[1])
+    end
+    table.insert(chunks_, 1, { '│ ', 'BrainNoteRule' })
+    chunks_[#chunks_ + 1] = { string.rep(' ', math.max(0, inner - w)) .. ' │', 'BrainNoteRule' }
+    virt[#virt + 1] = chunks_
   end
-  local name = vim.fn.fnamemodify(item.target, ':t'):gsub('%.md$', '')
-  return item.anchor and (name .. ' › ' .. item.anchor) or name
-end
-
---- Virtual lines for an embed: rule with the title, the text, a closing rule.
-local function build(item, lines, err, width)
-  local title = title_of(item)
-  local head = '── ' .. title .. ' '
-  local fill = math.max(2, width - vim.fn.strdisplaywidth(head))
-  local virt = {
-    { { '── ', 'BrainNoteRule' }, { title, 'BrainNoteTitle' }, { ' ' .. string.rep('─', fill), 'BrainNoteRule' } },
-  }
+  width = inner
   if err then
-    virt[#virt + 1] = { { err, 'BrainNoteMeta' } }
+    add({ { err, 'BrainNoteMeta' } })
   else
     -- no blank lines at the edges
     local s, e = 1, #lines
@@ -227,13 +234,13 @@ local function build(item, lines, err, width)
     end
     for i, b in ipairs(body) do
       if i > max_h then
-        virt[#virt + 1] = { { string.format('… %d more lines (gf to open)', #body - max_h), 'BrainNoteMeta' } }
+        add({ { string.format('… %d more lines (gf to open)', #body - max_h), 'BrainNoteMeta' } })
         break
       end
-      virt[#virt + 1] = b
+      add(b)
     end
   end
-  virt[#virt + 1] = { { string.rep('─', width), 'BrainNoteRule' } }
+  virt[#virt + 1] = { { '╰' .. string.rep('─', inner + 2) .. '╯', 'BrainNoteRule' } }
   return virt
 end
 
@@ -304,7 +311,7 @@ function M.refresh(buf)
       end
       if it.line < n then
         vim.api.nvim_buf_set_extmark(buf, ns, it.line, math.min(it.col, #(vim.api.nvim_buf_get_lines(buf, it.line, it.line + 1, false)[1] or '')), {
-          virt_lines = build(it, lines or {}, msg, width),
+          virt_lines = build(lines or {}, msg, width),
           undo_restore = false,
           invalidate = true,
         })

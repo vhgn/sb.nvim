@@ -33,6 +33,7 @@ M.defaults = {
   notes = {
     enabled = true, -- render ![[Note]] / ![[Note#Heading]] / ![[Note#^block]] inline
     max_height = 40, -- rows of embedded text; longer notes are cut (gf opens them)
+    max_width = 80, -- columns of embedded text; lines wrap between words
   },
   images = {
     enabled = true, -- needs image.nvim
