@@ -3,9 +3,9 @@ local M = {}
 ---@class brain.Config
 M.defaults = {
   -- Vault root: a path, or a function(bufnr) -> path. Default: nearest
-  -- directory with .obsidian/.brain/.git, else the current directory.
+  -- directory with .brain/.git, else the current directory.
   root = nil,
-  root_markers = { '.obsidian', '.brain', '.git' },
+  root_markers = { '.brain', '.git' },
   -- Directory holding the brain Go sources (defaults to the plugin repo root).
   -- The binary is built into <source>/bin/brain.
   source = nil,

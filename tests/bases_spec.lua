@@ -113,7 +113,7 @@ T['yaml: a comment-only base lists every vault file except dot folders in a defa
     ['pic.png'] = 'x',
     ['README'] = 'x',
     ['q.base'] = '# nothing',
-    ['.obsidian/app.md'] = 'x',
+    ['.cache/app.md'] = 'x',
     ['.hidden.md'] = 'x',
   })
   H.setup()
