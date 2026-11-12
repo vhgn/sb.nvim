@@ -18,6 +18,7 @@ M.defaults = {
     init_options = {
       completion = { wikiLinks = true, atLinks = true },
       hoverLines = 40,
+      format = { width = 80 }, -- vim.lsp.buf.format() wraps longer lines between words; 0 turns it off
     },
   },
   daemon = {

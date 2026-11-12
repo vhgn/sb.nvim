@@ -491,3 +491,23 @@ func TestDefinitionOpensMissingNote(t *testing.T) {
 		t.Errorf("got %q, want ideas/fresh.md", got)
 	}
 }
+
+func TestFormattingWrapsLongLines(t *testing.T) {
+	t.Parallel()
+	var got []string
+	runNvim(t, "", `
+		H.open('index.md')
+		local long = 'Intro ' .. string.rep('word ', 30) .. 'see [[Some Long Note]] end'
+		vim.api.nvim_buf_set_lines(0, -1, -1, false, { long })
+		vim.lsp.buf.format({ name = 'brain', timeout_ms = 5000 })
+		local n = vim.api.nvim_buf_line_count(0)
+		return vim.api.nvim_buf_get_lines(0, n - 3, n, false)`, &got)
+	want := []string{
+		"Intro word word word word word word word word word word word word word word word",
+		"word word word word word word word word word word word word word word word see",
+		"[[Some Long Note]] end",
+	}
+	if !slices.Equal(got, want) {
+		t.Errorf("got %q\nwant %q", got, want)
+	}
+}

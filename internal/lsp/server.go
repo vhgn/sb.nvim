@@ -19,14 +19,21 @@ type CompletionConfig struct {
 	AtLinks bool `json:"atLinks"`
 }
 
+type FormatConfig struct {
+	// Width is the column lines are wrapped at by textDocument/formatting;
+	// 0 turns wrapping off.
+	Width int `json:"width"`
+}
+
 type Config struct {
 	Completion CompletionConfig `json:"completion"`
+	Format     FormatConfig     `json:"format"`
 	// HoverLines caps the number of lines shown in a hover preview.
 	HoverLines int `json:"hoverLines"`
 }
 
 func DefaultConfig() Config {
-	return Config{Completion: CompletionConfig{WikiLinks: true, AtLinks: true}, HoverLines: 40}
+	return Config{Completion: CompletionConfig{WikiLinks: true, AtLinks: true}, Format: FormatConfig{Width: 80}, HoverLines: 40}
 }
 
 // merge overlays the fields present in raw. Settings may be wrapped in {"brain": {...}}.
@@ -191,6 +198,14 @@ func (s *Server) dispatch(method string, params json.RawMessage) (any, *response
 		return s.references(p), nil
 	case "textDocument/documentSymbol":
 		return s.documentSymbols(pos.TextDocument.URI), nil
+	case "textDocument/formatting":
+		var p struct {
+			TextDocument TextDocumentIdentifier `json:"textDocument"`
+		}
+		if e := decode(&p); e != nil {
+			return nil, e
+		}
+		return s.formatting(p.TextDocument.URI), nil
 	case "completionItem/resolve":
 		var item CompletionItem
 		if e := decode(&item); e != nil {
@@ -250,11 +265,12 @@ func (s *Server) initialize(params json.RawMessage) (any, *responseError) {
 			"change":    1, // full
 			"save":      false,
 		},
-		"definitionProvider":      true,
-		"hoverProvider":           true,
-		"referencesProvider":      true,
-		"documentSymbolProvider":  true,
-		"workspaceSymbolProvider": true,
+		"definitionProvider":         true,
+		"hoverProvider":              true,
+		"referencesProvider":         true,
+		"documentSymbolProvider":     true,
+		"workspaceSymbolProvider":    true,
+		"documentFormattingProvider": true,
 	}
 	if len(triggers) > 0 {
 		caps["completionProvider"] = map[string]any{"triggerCharacters": triggers, "resolveProvider": true}
